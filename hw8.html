@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Homework 8</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.3/angular-animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="hw8.js"></script>
+    
+</head>
+<body ng-app="myApp" ng-controller="myCtrl">
+    <script>
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+    
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="navbar navbar-default">
+                <div class="col-sm-3 col-xs-12" style="margin-bottom: -8px">
+                    <div class="navbar-header">
+                        <span class="customHeader">FB Search</span>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <div class="row customRow">
+                        <form class="navbar-form customForm" role="search">
+                            <div class="col-xs-8 customNavbar1">
+                                <div class="input-group col-xs-12 customInput">
+                                    <input type="text" id="keyword" class="form-control removeRadius" name="keyword" placeholder="type something..." ng-model="q" ng-keypress="checkEnter($event)">
+                                    <!--  need input validation-->
+                                    <span class="input-group-btn">
+                                        <button id="search" type="button" class="btn btn-primary removeRadius customSearch" ng-click="search()"><span class="glyphicon glyphicon-search"></span></button>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 customNavbar2">
+                                <a href="#user" data-toggle="pill"><button type="button" class="btn btn-default customClear removeRadius" ng-click="clear()">Clear</button></a>
+                            </div>
+                        </form>
+                    </div>
+                </div>   
+            </nav>
+        </div>
+    </div>
+    
+    <ul class="nav nav-pills nav-justified customNav">
+        <li id="user-tab" class="active"><a href="#user" data-toggle="pill" ng-click="viewTable(0)">Users</a></li>
+        <li><a href="#page" data-toggle="pill" ng-click="viewTable(1)">Pages</a></li>
+        <li><a href="#event" data-toggle="pill" ng-click="viewTable(2)">Events</a></li>
+        <li><a href="#place" data-toggle="pill" ng-click="viewTable(3)">Places</a></li>
+        <li><a href="#group" data-toggle="pill" ng-click="viewTable(4)">Groups</a></li>
+        <li><a href="#favorite" data-toggle="pill" ng-click="viewTable(5)">Favorites</a></li>
+    </ul>
+    
+    <div class="myTable" ng-hide="!seeTable" ng-cloak>
+        <div class="tab-content">
+            <div id="user" class="tab-pane fade {{ active[0] }}">
+                <div class="container-fluid">
+                    <div id="userRes">
+                        <div ng-cloak ng-show="showProgress" class="progress search-progress-bar">
+                            <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                        </div>
+                        <div ng-cloak ng-show="data[0] && data[0].length > 0" class="table-responsive">
+                            <table class="table table-hover search-result col-xs-12">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Profile Photo</th>
+                                        <th>Name</th>
+                                        <th>Favorite</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in data[0]">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><img class="img-circle" ng-src="{{ x.picture.data.url }}"></td>
+                                        <td>{{ x.name }}</td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="myFavorite(x, 0)">
+                                        <span ng-cloak ng-hide="favorite[x.id]" class="glyphicon glyphicon-star-empty"></span>
+                                        <span ng-cloak ng-show="favorite[x.id]" class="glyphicon glyphicon-star"></span>
+                                            </button></td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 0)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-cloak ng-show="showError[0]" class="well">No data found.</div>
+                        <ul class="pager">
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[0].previous" ng-click="pager(0, paging[0].previous)">Previous</button></li>
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[0].next" ng-click="pager(0, paging[0].next)">Next</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="page" class="tab-pane fade {{ active[1] }}">
+                <div class="container-fluid">
+                    <div id="pageRes">
+                        <div ng-cloak ng-show="showProgress" class="progress search-progress-bar">
+                            <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                        </div>
+                        <div ng-cloak ng-show="data[1] && data[1].length > 0" class="table-responsive">
+                            <table class="table table-hover search-result col-xs-12">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Profile Photo</th>
+                                        <th>Name</th>
+                                        <th>Favorite</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in data[1]">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><img class="img-circle" ng-src="{{ x.picture.data.url }}"></td>
+                                        <td>{{ x.name }}</td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="myFavorite(x, 1)">
+                                            <span ng-cloak ng-hide="favorite[x.id]" class="glyphicon glyphicon-star-empty"></span>
+                                            <span ng-cloak ng-show="favorite[x.id]" class="glyphicon glyphicon-star"></span>
+                                            </button></td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 1)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-cloak ng-show="showError[1]" class="well">No data found.</div>
+                        <ul class="pager">
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[1].previous" ng-click="pager(1, paging[1].previous)">Previous</button></li>
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[1].next" ng-click="pager(1, paging[1].next)">Next</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="event" class="tab-pane fade {{ active[2] }}">
+                <div class="container-fluid">
+                    <div id="eventRes">
+                        <div ng-cloak ng-show="showProgress" class="progress search-progress-bar">
+                            <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                        </div>
+                        <div ng-cloak ng-show="data[2] && data[2].length > 0" class="table-responsive">
+                            <table class="table table-hover search-result col-xs-12">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Profile Photo</th>
+                                        <th>Name</th>
+                                        <th>Favorite</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in data[2]">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><img class="img-circle" ng-src="{{ x.picture.data.url }}"></td>
+                                        <td>{{ x.name }}</td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="myFavorite(x, 2)">
+                                        <span ng-cloak ng-hide="favorite[x.id]" class="glyphicon glyphicon-star-empty"></span>
+                                        <span ng-cloak ng-show="favorite[x.id]" class="glyphicon glyphicon-star"></span>
+                                            </button></td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 2)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-cloak ng-show="showError[2]" class="well">No data found.</div>
+                        <ul class="pager">
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[2].previous" ng-click="pager(2, paging[2].previous)">Previous</button></li>
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[2].next" ng-click="pager(2, paging[2].next)">Next</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="place" class="tab-pane fade {{ active[3] }}">
+                <div class="container-fluid">
+                    <div id="placeRes">
+                        <div ng-cloak ng-show="showProgress" class="progress search-progress-bar">
+                            <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                        </div>
+                        <div ng-cloak ng-show="data[3] && data[3].length > 0" class="table-responsive">
+                            <table class="table table-hover search-result col-xs-12">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Profile Photo</th>
+                                        <th>Name</th>
+                                        <th>Favorite</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in data[3]">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><img class="img-circle" ng-src="{{ x.picture.data.url }}"></td>
+                                        <td>{{ x.name }}</td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="myFavorite(x, 3)">
+                                        <span ng-cloak ng-hide="favorite[x.id]" class="glyphicon glyphicon-star-empty"></span>
+                                        <span ng-cloak ng-show="favorite[x.id]" class="glyphicon glyphicon-star"></span>
+                                            </button></td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 3)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-cloak ng-show="showError[3]" class="well">No data found.</div>
+                        <ul class="pager">
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[3].previous" ng-click="pager(3, paging[3].previous)">Previous</button></li>
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[3].next" ng-click="pager(3, paging[3].next)">Next</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="group" class="tab-pane fade {{ active[4] }}">
+                <div class="container-fluid">
+                    <div id="groupRes">
+                        <div ng-cloak ng-show="showProgress" class="progress search-progress-bar">
+                            <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                        </div>
+                        <div ng-cloak ng-show="data[4] && data[4].length > 0" class="table-responsive">
+                            <table class="table table-hover search-result col-xs-12">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Profile Photo</th>
+                                        <th>Name</th>
+                                        <th>Favorite</th>
+                                        <th>Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="x in data[4]">
+                                        <td>{{ $index + 1 }}</td>
+                                        <td><img class="img-circle" ng-src="{{ x.picture.data.url }}"></td>
+                                        <td>{{ x.name }}</td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="myFavorite(x, 4)">
+                                        <span ng-cloak ng-hide="favorite[x.id]" class="glyphicon glyphicon-star-empty"></span>
+                                        <span ng-cloak ng-show="favorite[x.id]" class="glyphicon glyphicon-star"></span>
+                                            </button></td>
+                                        <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 4)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div ng-cloak ng-show="showError[4]" class="well">No data found.</div>
+                        <ul class="pager">
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[4].previous" ng-click="pager(4, paging[4].previous)">Previous</button></li>
+                            <li><button type="button" class="btn btn-default" ng-cloak ng-show="paging[4].next" ng-click="pager(4, paging[4].next)">Next</button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div id="favorite" class="tab-pane fade {{ active[5] }}">
+                <div class="container-fluid">
+                     <div ng-cloak ng-hide="!favorite || isEmpty(favorite)" class="table-responsive">
+                        <table class="table table-hover search-result col-xs-12">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Profile Photo</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Favorite</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="(id, x) in favorite">
+                                    <td>{{ $index + 1 }}</td>
+                                    <td><img class="img-circle" ng-src="{{ x.src }}"></td>
+                                    <td>{{ x.name }}</td>
+                                    <td>{{ types[x.type] }}</td>
+                                    <td><button type="button" class="btn btn-default table-btn" ng-click="deleteFavorite(x.id)"><span class="glyphicon glyphicon-trash"></span></button></td>
+                                    <td><button type="button" class="btn btn-default table-btn" ng-click="viewDetail(x, 5)"><span class="glyphicon glyphicon-chevron-right"></span></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div ng-cloak ng-show="showProgress" class="progress search-progress-bar2">
+                        <div class='progress-bar progress-bar-striped active' style='width: 50%'></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="myDetail" ng-hide="!seeDetail" ng-cloak>
+        <div class="container-fluid">
+            <div class="row detail-navbar">
+                <div class="col-xs-4">
+                    <button type="button" class="btn btn-default" ng-click="back()"><span class="glyphicon glyphicon-chevron-left"></span>Back</button>
+                </div>
+                <div class="col-xs-8 right-buttons">
+                    <div ng-cloak ng-hide="showProgress">
+                        <button type="button" class="btn btn-default favorite" ng-click="myFavorite(detailObj, detailObj.type)">
+                            <span ng-cloak ng-hide="favorite[detailObj.id]" class="glyphicon glyphicon-star-empty"></span>
+                            <span ng-cloak ng-show="favorite[detailObj.id]" class="glyphicon glyphicon-star"></span>
+                        </button>
+                        <button type="button" class="btn btn-default facebook" ng-click="shareFB(detailObj.src, detailObj.name)"><img style="width: 20px; height: 20px" src="http://cs-server.usc.edu:45678/hw/hw8/images/facebook.png"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="row detail-content">
+                <div class="col-sm-6">
+                    <div class="panel panel-default albums">
+                        <div class="panel-heading">Albums</div>
+                        <div class="panel-body">
+                            
+                            <div ng-cloak ng-show="showProgress" class="progress">
+                                <div class="progress-bar progress-bar-striped active" style="width: 50%"></div>
+                            </div>
+                            
+                            <div ng-cloak ng-show="detail.albums.data" id="accordion" class="panel-group">
+                                <div class="panel panel-default" ng-repeat="x in detail.albums.data">
+                                    <div class="panel-heading">
+                                        <a ng-href="{{ doHavePhoto($index) }}" data-toggle="collapse" data-parent="#accordion">{{ x.name }}</a>
+                                    </div>
+                                    <div id="album{{ $index }}" class="panel-collapse collapse {{ firstAlbum($index) }}">
+                                        <div class="panel-body">
+                                            <img ng-repeat="photo in x.photos.data" class="img-responsive img-rounded" ng-src="https://graph.facebook.com/v2.8/{{ photo.id }}/picture?access_token=EAAchkllsEA8BAIAQP7WSUxfboMmHSCEAEjaRZBH3xGS4hbzyAXZA51vdXf1l4ocnq5BygslaLg0vKlwkKdENdxkqIqUZBuAtX3MgaTLfEFOHqYEHtvOcHjE90pPGGlYwkGwMRY291wjsrE2DddEvKm7cmkX77cZD">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="well" ng-cloak ng-show="detailError[0]">No data found.</div>
+                            
+                        </div>
+                    </div>
+                </div>
+                
+                 <div class="col-sm-6">
+                    <div class="panel panel-default posts">
+                        <div class="panel-heading">Posts</div>
+                        <div class="panel-body">
+                            <div ng-cloak ng-show="showProgress" class="progress">
+                                <div class="progress-bar progress-bar-striped active" style="width: 50%"></div>
+                            </div>
+                            
+                            <div ng-repeat="x in detail.posts.data" class="panel panel-default">
+                                <div class="panel-body">
+                                    <section class="post-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="media">
+                                                    <div class="media-left">
+                                                        <img class="media-object" ng-src="{{ detailObj.src }}">
+                                                    </div>
+                                                    <div class="media-body">
+                                                        <p class="media-heading">{{ detailObj.name }}</p> 
+                                                        <small>{{ parsedTime(x.created_time) }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>             
+                                    </section>
+                                    <section class="post-body">
+                                    <p>{{ x.message || x.story }}</p>
+                                    </section>
+                                </div>
+                            </div>
+
+                            <div class="well" ng-cloak ng-show="detailError[1]">No data found.</div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+   
+</body>
+</html>

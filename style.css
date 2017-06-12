@@ -1,0 +1,146 @@
+@media screen and (max-width:768px){
+    ul.customNav > li > a{padding: 0 15px; margin-bottom: 0} 
+    div.tab-pane div.container-fluid{margin: 0px 10px}
+    ul.customNav > li{margin-left: 0}
+    div.myDetail div.container-fluid{margin-top: 10px}
+    div.popover-content{font-size: 10px; padding: 5px}
+}
+@media screen and (min-width:768px){
+    ul.customNav > li > a{padding: 15px 15px}
+    div.tab-pane div.container-fluid{margin: 0px 30px}
+    div.myDetail div.container-fluid{margin-top: 20px}
+    div.popover-content{font-size: 12px; padding: 5px}
+}
+div.popover{color: white; background-color: black}
+div.popover.bottom .arrow:after{border-bottom-color: black}
+
+/* navigation */
+div.container-fluid div.row nav.navbar{margin-bottom: 0;}
+.navbar-default span.customHeader{color: #637faf;float: left;height: 50px;padding: 15px 15px;font-size: 18px;line-height: 20px}
+button.btn-primary{background-color: #3c5a96; width: 80%}
+form.customForm{border-bottom: 0; margin-right: 0}
+div div.customRow{padding-bottom: 10px;}
+div.customNavbar2{padding-left: 0}
+div.customInput[class*="col-"]{padding-left: 15px}
+button.customClear{border-color: #3c5a96; color: #3c5a96}
+button.customSearch{min-width: 40px}
+.removeRadius{border-radius: 0}
+ul.customNav > li.active > a, ul.customNav > li.active > a:hover, ul.customNav > li.active > a:focus{background-color: #3c5a96}
+ul.customNav{border-bottom: 2px solid #3c5a96}
+ul.customNav li a{border-radius: 0}
+
+/* result table */
+div.search-progress-bar{width: 80%; margin-top: 20%; margin-left: auto; margin-right: auto}
+div.search-progress-bar2{width: 80%; margin-top: 15%; margin-left: auto; margin-right: auto}
+div.tab-pane div.table-responsive{margin: 3.5% 0px}
+div.tab-pane div.well{background-color: #fdf8e4; border: 1px solid #f9ebd1; margin-top: 3.5%}
+table.search-result{margin: 0; min-width: 500px}
+table.search-result img{width: 35px; height: 35px}
+table.search-result > tbody > tr > td{vertical-align: middle}
+table.search-result > tbody > tr > th{border-top: 0px}
+table.search-result button.table-btn{padding: 4px 10px;}
+div.tab-pane ul.pager li button.btn-default{border-radius: 6px; margin: 0 12px; padding: 8px 18px}
+span.glyphicon.glyphicon-star{color: #fdd630}
+
+/* detail */
+div.myDetail div.detail-navbar{margin-bottom: 20px}
+div.myDetail div.right-buttons{text-align: right}
+div.myDetail button.favorite{padding: 6px 15px; margin-right: 10px}
+div.myDetail button.facebook{padding-top: 4.366666px; margin-left: 10px}
+div.myDetail div.progress{margin-top: 20px}
+div.myDetail div.albums div.panel-group{margin-bottom: 10px}
+div.myDetail div.albums div.panel-group div.panel-heading a{font-size: 15px}
+div.myDetail div.albums div.panel-group div.panel-body{padding-bottom: 0}
+div.myDetail div.albums div.panel-group img.img-responsive{margin-bottom: 15px}
+div.myDetail div.well{background-color: #fdf8e4; border: 1px solid #f9ebd1}
+div.myDetail div.posts div.media-left {padding: 0 20px 20px 0}
+div.myDetail div.posts div.media-left img{width: 40px; height: 40px}
+div.myDetail div.posts div.media-body p.media-heading{margin-bottom: 0; font-weight: 500}
+div.myDetail div.posts div.media-body small{font-weight: 300; color: #ADB2BB}
+
+/*  animation  */
+div.myDetail{
+    position: absolute;
+    right: 0;
+    width: 100%;
+}
+
+div.myTable{
+    position: absolute;
+    left: 0;
+    width: 100%;
+}
+
+.myTable.ng-hide-remove, .myDetail.ng-hide-remove{
+  opacity: 0
+}
+
+.myTable.ng-hide-remove-active{
+    animation: table_enter_animation 0.3s linear;
+    -webkit-animation: table_enter_animation 0.3s linear;
+}
+
+@keyframes table_enter_animation {
+  from { 
+      -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+      transform: translateX(100%);
+      opacity: 1;
+    }
+  to { 
+      -webkit-transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      transform: translateX(0%);
+      opacity: 1;
+    }
+}
+
+@-webkit-keyframes table_enter_animation {
+  from { 
+      -webkit-transform: translateX(100%);
+      -ms-transform: translateX(100%);
+      transform: translateX(100%);
+      opacity: 1;
+    }
+  to { 
+      -webkit-transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      transform: translateX(0%);
+      opacity: 1;
+    }
+}
+
+.myDetail.ng-hide-remove-active{
+    animation: detail_enter_animation 0.3s linear;
+    -webkit-animation: detail_enter_animation 0.3s linear;
+}
+
+@keyframes detail_enter_animation {
+  from { 
+      -webkit-transform: translateX(-100%);
+      transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+      opacity: 1;
+    }
+  to { 
+      -webkit-transform: translateX(0%);
+      transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      opacity: 1;
+    }
+}
+
+@-webkit-keyframes detail_enter_animation {
+  from { 
+      -webkit-transform: translateX(-100%);
+      transform: translateX(-100%);
+      -ms-transform: translateX(-100%);
+      opacity: 1;
+    }
+  to { 
+      -webkit-transform: translateX(0%);
+      transform: translateX(0%);
+      -ms-transform: translateX(0%);
+      opacity: 1;
+    }
+}
