@@ -1,0 +1,4 @@
+getLocation(){
+    if (navigator.geolocation) { // get location
+            navigator.geolocation.getCurrentPosition(function getPosition(position){
+                center = position.coords.latitude + ',' + position.coords.longitude;
